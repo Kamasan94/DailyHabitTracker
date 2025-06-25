@@ -7,10 +7,6 @@ export const authRoute = Router();
 
 var message;
 
-authRoute.post('/login', (req, res) => {
-
-})
-
 //Save an user to mongodb
 //To save I need the user and the password
 //user and password are in the req variable
@@ -20,7 +16,7 @@ authRoute.post('/register', async (req, res) => {
      try{
           var username = req.body["user"];
           var password = req.body["password"];
-          console.log(username, password);
+          console.log("Register - Trying to register: ", username, password);
           
           if(username == ''){
                message ="Error: username needed" 
@@ -36,7 +32,9 @@ authRoute.post('/register', async (req, res) => {
           //Check user existence
           const userFound = await User.findOne({username : username}).exec();
           if(userFound != null){
-               res.status(400).json({msg: "User already exists"});
+               message = "User already exists";
+               res.status(400).json({msg: message});
+               console.log("Register - ", message);
                return;
           }
 
@@ -64,25 +62,23 @@ authRoute.post('/login', async (req, res) => {
      try{
           var username = req.body["user"];
           var password = req.body["password"];
-
-          const user = await User.findOne(username);
+          console.log("Login for user: ", username, password);
+          const user = await User.findOne({username});
           if(user) {
                const hash = user.password;
                if(compareSync(password, hash)){
-                    res.send('scopa');
+                    res.send('Login finished');
                }
                else{
-                   res.send("Bro hai sbagliato");
+                   res.send("Login failed");
                }
           }
           else{
-               res.send("Non trovato");
+               res.send("Login failed");
           }
 
      }
      catch(e){
           console.log(e);
      }
-
-     res.send("Login finished");
 })
