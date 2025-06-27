@@ -13,6 +13,7 @@ var message;
 //If user and password are set we search for the username in mongo
 //Add user in mongo
 authRoute.post('/register', async (req, res) => {
+     let user = new User();
      try{
           var username = req.body["user"];
           var password = req.body["password"];
@@ -43,10 +44,11 @@ authRoute.post('/register', async (req, res) => {
           const passwordHash = hashSync(password, salt);
 
           //User add
-          const user = new User({
+          user = new User({
                username: username,
                password: passwordHash
           });
+          
           await user.save();
           
      }
@@ -54,7 +56,7 @@ authRoute.post('/register', async (req, res) => {
           console.log(e);
      }
 
-     res.send('Registration completed');
+     res.send('Registration completed for user ' + user.userId);
      
 })
 
